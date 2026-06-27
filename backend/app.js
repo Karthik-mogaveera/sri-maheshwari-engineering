@@ -9,6 +9,7 @@ const slideshowRoutes = require('./routes/slideshow');
 const whoWeAreRoutes = require('./routes/whoweare');
 const servicesRoutes  = require('./routes/services');
 const clientsRoutes   = require('./routes/clients');
+const supplyVendorsRoutes   = require('./routes/supplyVendors');
 const deliverablesRoutes = require('./routes/deliverables');
 const aboutPeopleRoutes = require('./routes/aboutPeople');
 const aboutCompanyRoutes = require('./routes/aboutCompany');
@@ -17,11 +18,15 @@ const projects = require('./routes/projects');
 const contact = require('./routes/contact');
 const inquiries = require('./routes/inquiries');
 const information = require('./routes/settings/information');
-const social = require('./routes/settings/social');
+const socialMedia = require('./routes/settings/socialMedia');
 const seo = require('./routes/settings/seo');
 const security = require('./routes/settings/security');
 
 const app = express();
+
+// const cors = require('cors');
+
+// app.use(cors());
 
 // ── Middleware ────────────────────────────────────────────────
 app.use(cors({
@@ -46,6 +51,7 @@ app.use('/api/admin/slideshow', slideshowRoutes);   // ← slideshow module
 app.use('/api/admin/whoweare', whoWeAreRoutes);   // ← who we are module
 app.use('/api/admin/services',   servicesRoutes);    // ← services module
 app.use('/api/admin/clients',    clientsRoutes);     // ← clients module
+app.use('/api/admin/supply-vendors', supplyVendorsRoutes);
 app.use('/api/admin/deliverables', deliverablesRoutes);
 app.use('/api/admin/about-people', aboutPeopleRoutes);
 app.use('/api/admin/about-company', aboutCompanyRoutes);
@@ -54,7 +60,7 @@ app.use('/api/admin/projects', projects);
 app.use('/api/contact', contact);
 app.use('/api/admin/inquiries', inquiries);
 app.use('/api/admin/settings/information', information);
-app.use('/api/admin/settings/social', social);
+app.use('/api/admin/settings/social-media', socialMedia);
 app.use('/api/admin/settings/seo', seo);
 app.use('/api/admin/settings/security', security);
 

@@ -126,7 +126,7 @@ export default function AdminLogin() {
               type="email"
               value={email}
               onChange={e => { setEmail(e.target.value); setError(''); }}
-              placeholder="admin@smeeindia.com"
+              // placeholder="admin@smeeindia.com"
               autoComplete="email"
               required
               style={{
@@ -154,7 +154,7 @@ export default function AdminLogin() {
                 type={showPass ? 'text' : 'password'}
                 value={password}
                 onChange={e => { setPassword(e.target.value); setError(''); }}
-                placeholder="••••••••"
+                // placeholder="••••••••"
                 autoComplete="current-password"
                 required
                 style={{

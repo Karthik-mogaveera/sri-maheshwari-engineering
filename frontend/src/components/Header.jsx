@@ -13,6 +13,9 @@
 // ─────────────────────────────────────────────────────────────
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import axios from 'axios'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
 // Single source of truth: label -> route
 const NAV_ITEMS = [
@@ -25,6 +28,7 @@ const NAV_ITEMS = [
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [logo, setLogo] = useState(null)
   const navigate  = useNavigate()
   const location  = useLocation()
 
@@ -33,6 +37,24 @@ export default function Header() {
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  useEffect(() => {
+  const fetchLogo = async () => {
+    try {
+      const res = await axios.get(
+        `${API_URL}/api/admin/settings/information/public`
+      )
+
+      if (res.data.success) {
+        setLogo(res.data.data?.logo_url || null)
+      }
+    } catch (err) {
+      console.error('Failed to load logo', err)
+    }
+  }
+
+  fetchLogo()
+}, [])
 
   // Close mobile menu when route changes
   useEffect(() => { setMenuOpen(false) }, [location])
@@ -80,29 +102,56 @@ export default function Header() {
               background: 'none', border: 'none', cursor: 'pointer', padding: 0
             }}
           >
-            <div style={{
-              width: 'clamp(38px, 5vw, 46px)',
-              height: 'clamp(38px, 5vw, 46px)',
-              borderRadius: '10px',
-              background: 'linear-gradient(135deg, #14B8A6, #0E9488)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 'clamp(18px, 2.5vw, 22px)', fontWeight: 800, color: 'white',
-              fontFamily: 'var(--font-display)',
-              boxShadow: '0 4px 15px rgba(20,184,166,0.4)', flexShrink: 0
-            }}>S</div>
+            <div
+              style={{
+                width: 'clamp(38px, 5vw, 46px)',
+                height: 'clamp(38px, 5vw, 46px)',
+                borderRadius: '10px',
+                overflow: 'hidden',
+                background: '#fff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 15px rgba(20,184,166,0.4)',
+                flexShrink: 0
+              }}
+            >
+              {logo ? (
+                <img
+                  src={logo}
+                  alt="Company Logo"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain'
+                  }}
+                />
+              ) : (
+                <span
+                  style={{
+                    fontSize: 'clamp(18px, 2.5vw, 22px)',
+                    fontWeight: 800,
+                    color: '#14B8A6',
+                    fontFamily: 'var(--font-display)'
+                  }}
+                >
+                  S
+                </span>
+              )}
+            </div>
             <div style={{ textAlign: 'left' }}>
               <div style={{
                 fontFamily: 'var(--font-display)', fontWeight: 700,
                 fontSize: 'clamp(12px, 2vw, 18px)',
                 color: 'white', lineHeight: 1.2, letterSpacing: '0.01em'
               }}>
-                Sri Maheshwari Engineering
+                Sri Maheshwari
               </div>
               <div style={{
-                fontSize: 'clamp(8px, 1.2vw, 12px)',
+                fontSize: 'clamp(12px, 2vw, 15px)',
                 color: 'rgba(20,184,166,0.9)',
                 letterSpacing: '0.12em', fontWeight: 500, textTransform: 'uppercase'
-              }}>Enterprises</div>
+              }}>Engineering Enterprises</div>
             </div>
           </button>
 

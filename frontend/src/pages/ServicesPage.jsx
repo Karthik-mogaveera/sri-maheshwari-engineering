@@ -6,6 +6,7 @@
 //   2. Deliverables    — bullet points from deliverables table
 // ─────────────────────────────────────────────────────────────
 import { useState, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import axios from 'axios'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
@@ -52,6 +53,7 @@ function SkeletonCard() {
 function ServiceCard({ service, index }) {
   const [imgLoaded, setImgLoaded] = useState(false)
   const [expanded, setExpanded]   = useState(false)
+  const navigate  = useNavigate()
 
   // Truncate full_desc for "read more" behaviour
   const CHAR_LIMIT = 260
@@ -59,7 +61,13 @@ function ServiceCard({ service, index }) {
   const displayText = expanded || !isLong
     ? service.full_desc
     : service.full_desc.slice(0, CHAR_LIMIT).trimEnd() + '…'
-
+const goToContact = () => {
+  navigate('/contact')
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
+}
   return (
     <div
       style={{
@@ -155,7 +163,7 @@ function ServiceCard({ service, index }) {
 
         {/* Enquire button */}
         <button
-          onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
+          onClick={goToContact}
           className="btn-primary"
           style={{
             marginTop: 'clamp(16px,2vw,22px)',

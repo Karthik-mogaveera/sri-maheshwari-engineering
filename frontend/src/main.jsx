@@ -21,7 +21,8 @@ import AdminLogin from './admin/AdminLogin.jsx'
 import AdminLayout from './admin/AdminLayout.jsx'
 import AdminDashboard from './admin/AdminDashboard.jsx'
 import InquiriesPage from './admin/InquiriesPage.jsx'
-// import SettingPage from './admin/SettingsPage.jsx'
+import { Toast, SettingCard } from './admin/settings/shared';
+import SettingPage from './admin/SettingsPage.jsx'
 
 
 // Placeholder pages (expand these later)
@@ -97,7 +98,7 @@ createRoot(document.getElementById('root')).render(
                 <Routes>
                   <Route path="dashboard" element={<AdminDashboard />} />
                   <Route path="inquiries" element={<InquiriesPage />} />
-                  {/* <Route path="settings" element={<SettingPage />} /> */}
+                  <Route path="settings" element={<SettingPage />} />
                   <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
                 </Routes>
               </AdminLayout>

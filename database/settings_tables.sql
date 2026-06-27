@@ -17,17 +17,24 @@ CREATE TABLE IF NOT EXISTS settings_information (
   updated_at       DATETIME       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- ── Social Media ──────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS settings_social (
-  id          INT AUTO_INCREMENT PRIMARY KEY,
-  facebook    VARCHAR(500)   NULL,
-  instagram   VARCHAR(500)   NULL,
-  twitter     VARCHAR(500)   NULL,
-  linkedin    VARCHAR(500)   NULL,
-  youtube     VARCHAR(500)   NULL,
-  whatsapp    VARCHAR(30)    NULL,
-  updated_at  DATETIME       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+-- ============================================================
+--  Social Media table for SMEE Admin Panel
+--  Run: mysql -u root -p sri_maheshwari < database/social_media_table.sql
+-- ============================================================
+
+USE sri_maheshwari;
+
+CREATE TABLE IF NOT EXISTS social_media (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  name       VARCHAR(100)  NOT NULL,
+  icon       VARCHAR(100)  NOT NULL,
+  link       VARCHAR(500)  NOT NULL,
+  sort_order INT           DEFAULT 0,
+  created_at DATETIME      DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME      DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+SELECT 'social_media table ready.' AS STATUS; 
 
 -- ── SEO ───────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS settings_seo (

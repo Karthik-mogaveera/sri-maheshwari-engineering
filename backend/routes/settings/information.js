@@ -3,10 +3,10 @@
  * Single-row settings: logo, favicon, phone, email, address, map_url
  */
 const express = require('express');
-const multer  = require('multer');
-const path    = require('path');
-const fs      = require('fs');
-const pool    = require('../../config/db');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const pool = require('../../config/db');
 const { verifyToken } = require('../../middleware/auth');
 
 const router = express.Router();
@@ -25,14 +25,14 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
-    const ok = ['.jpg','.jpeg','.png','.webp','.svg','.ico'].includes(
+    const ok = ['.jpg', '.jpeg', '.png', '.webp', '.svg', '.ico'].includes(
       path.extname(file.originalname).toLowerCase()
     );
     cb(ok ? null : new Error('Image files only'), ok);
   },
   limits: { fileSize: 2 * 1024 * 1024 }
 }).fields([
-  { name: 'logo',    maxCount: 1 },
+  { name: 'logo', maxCount: 1 },
   { name: 'favicon', maxCount: 1 }
 ]);
 
@@ -54,7 +54,7 @@ router.get('/', verifyToken, async (req, res) => {
       success: true,
       data: row ? {
         ...row,
-        logo_url:    imgUrl(req, row.logo_filename),
+        logo_url: imgUrl(req, row.logo_filename),
         favicon_url: imgUrl(req, row.favicon_filename)
       } : null
     });
@@ -75,7 +75,7 @@ router.put('/', verifyToken, (req, res, next) => {
     const [existing] = await pool.query('SELECT * FROM settings_information LIMIT 1');
     const row = existing[0];
 
-    let logoFile    = row?.logo_filename    || null;
+    let logoFile = row?.logo_filename || null;
     let faviconFile = row?.favicon_filename || null;
 
     if (req.files?.logo?.[0]) {
@@ -92,13 +92,13 @@ router.put('/', verifyToken, (req, res, next) => {
         `UPDATE settings_information
            SET logo_filename=?, favicon_filename=?, phone=?, email=?, address=?, map_url=?
          WHERE id=?`,
-        [logoFile, faviconFile, phone||null, email||null, address||null, map_url||null, row.id]
+        [logoFile, faviconFile, phone || null, email || null, address || null, map_url || null, row.id]
       );
     } else {
       await pool.query(
         `INSERT INTO settings_information (logo_filename, favicon_filename, phone, email, address, map_url)
          VALUES (?,?,?,?,?,?)`,
-        [logoFile, faviconFile, phone||null, email||null, address||null, map_url||null]
+        [logoFile, faviconFile, phone || null, email || null, address || null, map_url || null]
       );
     }
 
@@ -111,6 +111,26 @@ router.put('/', verifyToken, (req, res, next) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Failed to save.' });
+  }
+});
+
+router.get('/public', async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM settings_information LIMIT 1');
+    const row = rows[0] || null;
+    res.json({
+      success: true,
+      data: row ? {
+        phone:       row.phone,
+        email:       row.email,
+        address:     row.address,
+        map_url:     row.map_url,
+        logo_url:    imgUrl(req, row.logo_filename),
+        favicon_url: imgUrl(req, row.favicon_filename)
+      } : null
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Failed to fetch.' });
   }
 });
 

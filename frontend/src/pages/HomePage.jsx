@@ -5,6 +5,7 @@
 // ─────────────────────────────────────────────────────────────
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
@@ -45,6 +46,7 @@ function HeroSlider() {
   const [slides, setSlides] = useState(FALLBACK_SLIDES)
   const [current, setCurrent] = useState(0)
   const timerRef = useRef(null)
+  const navigate  = useNavigate()
 
   useEffect(() => {
     axios.get(`${API_URL}/api/admin/slideshow/public`)
@@ -66,6 +68,22 @@ function HeroSlider() {
 
   const goTo = (i) => { clearInterval(timerRef.current); setCurrent(i); startTimer(slides.length) }
   const active = slides[current] || slides[0]
+  
+  const goToService = () => {
+  navigate('/services')
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
+}
+
+const goToAbout = () => {
+  navigate('about')
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
+}
 
   return (
     <section id="home" style={{
@@ -158,7 +176,7 @@ function HeroSlider() {
         }}>
           <button
             className="btn-primary"
-            onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={goToService}
             style={{
               padding: 'clamp(11px,1.5vw,14px) clamp(20px,3vw,32px)',
               borderRadius: '10px', border: 'none', cursor: 'pointer',
@@ -167,7 +185,7 @@ function HeroSlider() {
           >Explore Services</button>
 
           <button
-            onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={goToAbout}
             style={{
               background: 'rgba(255,255,255,0.1)',
               border: '1px solid rgba(255,255,255,0.35)',
@@ -427,6 +445,7 @@ function ServicesSection() {
   const [services, setServices] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeService, setActiveService] = useState(null)
+  const navigate  = useNavigate()
 
   useEffect(() => {
     axios.get(`${API_URL}/api/admin/services/public`)
@@ -434,6 +453,14 @@ function ServicesSection() {
       .catch(() => { })
       .finally(() => setLoading(false))
   }, [])
+
+  const goToContact = () => {
+  navigate('/contact')
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
+}
 
   const activeData = services.find(s => s.id === activeService)
 
@@ -625,7 +652,7 @@ function ServicesSection() {
                   fontSize: 'clamp(13px,1.5vw,16px)', lineHeight: 1.85
                 }}>{activeData.full_desc}</p>
                 <button
-                  onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={goToContact}
                   className="btn-primary"
                   style={{
                     marginTop: 'clamp(20px,2.5vw,32px)',
@@ -698,6 +725,87 @@ function ClientCard({ client }) {
           padding: '5px 8px', backdropFilter: 'blur(4px)',
           border: '1px solid rgba(20,184,166,0.3)', wordBreak: 'break-word'
         }}>{client.name}</span>
+      </div>
+    </div>
+  )
+}
+
+function SupplyVendorCard({ vendor }) {
+  const [hovered, setHovered] = useState(false)
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position: 'relative',
+        borderRadius: '14px',
+        overflow: 'hidden',
+        width: 'clamp(110px,14vw,150px)',
+        height: 'clamp(80px,10vw,110px)',
+        background: '#ffffffe5',
+        cursor: 'default',
+        flexShrink: 0,
+        border: `1px solid ${
+          hovered
+            ? 'rgba(20,184,166,0.5)'
+            : 'rgba(255,255,255,0.08)'
+        }`,
+        boxShadow: hovered
+          ? '0 8px 28px rgba(20,184,166,0.18)'
+          : '0 2px 10px rgba(0,0,0,0.2)',
+        transition: 'border-color 0.3s, box-shadow 0.3s'
+      }}
+    >
+      <img
+        src={vendor.image_url}
+        alt={vendor.name}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'contain',
+          transition:
+            'transform 0.45s cubic-bezier(0.4,0,0.2,1), filter 0.35s ease',
+          transform: hovered ? 'scale(0.82)' : 'scale(1)',
+          filter: hovered
+            ? 'brightness(0.3) blur(1px)'
+            : 'brightness(1)'
+        }}
+        onError={e => {
+          e.target.style.display = 'none'
+        }}
+      />
+
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '8px',
+          opacity: hovered ? 1 : 0,
+          transform: hovered ? 'translateY(0)' : 'translateY(6px)',
+          transition: 'opacity 0.35s ease, transform 0.35s ease',
+          pointerEvents: 'none'
+        }}
+      >
+        <span
+          style={{
+            color: 'white',
+            fontSize: 'clamp(9px,1.1vw,12px)',
+            fontWeight: 700,
+            textAlign: 'center',
+            lineHeight: 1.35,
+            background: 'rgba(20,184,166,0.2)',
+            borderRadius: '8px',
+            padding: '5px 8px',
+            backdropFilter: 'blur(4px)',
+            border: '1px solid rgba(20,184,166,0.3)'
+          }}
+        >
+          {vendor.name}
+        </span>
       </div>
     </div>
   )
@@ -776,6 +884,155 @@ function ClientsSection() {
   )
 }
 
+function SupplyVendorsSection() {
+  const [vendors, setVendors] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/admin/supply-vendors/public`)
+      .then(({ data }) => {
+        if (data.success && data.vendors.length > 0) {
+          setVendors(data.vendors)
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  return (
+    <section
+      style={{
+        padding: 'clamp(40px,6vw,80px) clamp(16px,3vw,24px)',
+        background: '#F8FAFC'
+      }}
+    >
+      <div
+        style={{
+          maxWidth: '1200px',
+          margin: '0 auto'
+        }}
+      >
+        {/* Heading */}
+        <div
+          style={{
+            textAlign: 'center',
+            marginBottom: 'clamp(28px,4vw,48px)'
+          }}
+        >
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '12px',
+              marginBottom: '14px'
+            }}
+          >
+            <div className="section-divider" />
+            <span
+              style={{
+                fontSize: '12px',
+                fontWeight: 700,
+                letterSpacing: '0.15em',
+                color: '#14B8A6',
+                textTransform: 'uppercase'
+              }}
+            >
+              Supply Network
+            </span>
+            <div className="section-divider" />
+          </div>
+
+          <h2
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(20px,3vw,36px)',
+              fontWeight: 700,
+              color: '#0B1F3A'
+            }}
+          >
+            Our Supply Vendors
+          </h2>
+        </div>
+
+        {/* Skeleton */}
+        {loading && (
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '16px',
+              justifyContent: 'center'
+            }}
+          >
+            {[1,2,3,4,5,6].map(i => (
+              <div
+                key={i}
+                style={{
+                  width: 'clamp(110px,14vw,150px)',
+                  height: 'clamp(80px,10vw,110px)',
+                  borderRadius: '14px',
+                  background:
+                    'linear-gradient(90deg,#E5E7EB 25%,#F3F4F6 50%,#E5E7EB 75%)',
+                  backgroundSize: '300% 100%',
+                  animation: 'shimmer 1.6s infinite'
+                }}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Empty */}
+        {!loading && vendors.length === 0 && (
+          <div
+            style={{
+              textAlign: 'center',
+              padding: '40px 0'
+            }}
+          >
+            <div
+              style={{
+                fontSize: '40px',
+                marginBottom: '12px'
+              }}
+            >
+              🏭
+            </div>
+
+            <p
+              style={{
+                color: '#6B7280',
+                fontSize: '14px'
+              }}
+            >
+              Supply vendor logos will appear here once added from the admin panel.
+            </p>
+          </div>
+        )}
+
+        {/* Vendors Grid */}
+        {!loading && vendors.length > 0 && (
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 'clamp(10px,1.5vw,16px)',
+              justifyContent: 'center'
+            }}
+          >
+            {vendors.map(vendor => (
+              <SupplyVendorCard
+                key={vendor.id}
+                vendor={vendor}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
+
 // ══════════════════════════════════════════════════════════════
 //  HOME PAGE ROOT
 // ══════════════════════════════════════════════════════════════
@@ -787,6 +1044,7 @@ export default function HomePage() {
       <AboutSection />
       <ServicesSection />
       <ClientsSection />
+      <SupplyVendorsSection />
     </>
   )
 }
