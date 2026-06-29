@@ -106,9 +106,9 @@ export default function Header() {
               style={{
                 width: 'clamp(38px, 5vw, 46px)',
                 height: 'clamp(38px, 5vw, 46px)',
-                borderRadius: '10px',
+                borderRadius: '45px',
                 overflow: 'hidden',
-                background: '#fff',
+                background: '#14B8A6',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -143,14 +143,14 @@ export default function Header() {
               <div style={{
                 fontFamily: 'var(--font-display)', fontWeight: 700,
                 fontSize: 'clamp(12px, 2vw, 18px)',
-                color: 'white', lineHeight: 1.2, letterSpacing: '0.01em'
+                color: 'rgba(20,184,166,0.9)', lineHeight: 1.2, letterSpacing: '0.01em'
               }}>
                 Sri Maheshwari
               </div>
               <div style={{
-                fontSize: 'clamp(12px, 2vw, 15px)',
-                color: 'rgba(20,184,166,0.9)',
-                letterSpacing: '0.12em', fontWeight: 500, textTransform: 'uppercase'
+                fontFamily: 'var(--font-display)', fontWeight: 700,
+                fontSize: 'clamp(12px, 2vw, 18px)',
+                color: 'rgba(20,184,166,0.9)', lineHeight: 1.2, letterSpacing: '0.01em'
               }}>Engineering Enterprises</div>
             </div>
           </button>

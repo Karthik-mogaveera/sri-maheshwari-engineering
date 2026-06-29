@@ -229,9 +229,9 @@ export default function Footer() {
                 style={{
                   width: '48px',
                   height: '48px',
-                  borderRadius: '12px',
+                  borderRadius: '45px',
                   overflow: 'hidden',
-                  background: '#fff',
+                  background: '#14B8A6',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
