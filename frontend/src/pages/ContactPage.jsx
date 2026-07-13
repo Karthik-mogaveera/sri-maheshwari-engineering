@@ -4,8 +4,9 @@
 // Form fields: Name, Email, Phone, Company Name, Message.
 // Security: X-Requested-With CSRF header, client-side validation.
 // On success: shows thank-you card, resets form.
+// Contact info card: live from settings_information table.
 // ─────────────────────────────────────────────────────────────
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
@@ -119,6 +120,9 @@ function TextArea({ value, onChange, placeholder, hasError }) {
 }
 
 // ── Page hero ─────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+//  PAGE HERO BANNER
+// ══════════════════════════════════════════════════════════════
 function PageHero() {
   return (
     <section style={{
@@ -126,9 +130,23 @@ function PageHero() {
       paddingBottom: 'clamp(40px,6vw,64px)',
       paddingLeft: 'clamp(16px,3vw,24px)',
       paddingRight: 'clamp(16px,3vw,24px)',
-      background: 'linear-gradient(135deg, #060F1D 0%, #0B1F3A 60%, #0d2a4a 100%)',
       textAlign: 'center', position: 'relative', overflow: 'hidden'
     }}>
+      {/* Static hero image */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        backgroundImage: `url('/images/electrician.jpg')`, // ← swap in your image path/URL
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }} />
+
+      {/* Dark gradient overlay — same colors as before, now translucent over the image */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(135deg, rgba(6,15,29,0.92) 0%, rgba(11,31,58,0.88) 60%, rgba(13,42,74,0.75) 100%)',
+      }} />
+
+      {/* Background rings */}
       {[300, 500, 700].map(size => (
         <div key={size} style={{
           position: 'absolute', width: size, height: size,
@@ -138,7 +156,8 @@ function PageHero() {
         }} />
       ))}
 
-      <div style={{ position: 'relative', zIndex: 1, maxWidth: '700px', margin: '0 auto' }}>
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: '800px', margin: '0 auto' }}>
+        {/* Breadcrumb */}
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: '8px',
           color: 'rgba(255,255,255,0.45)', fontSize: '13px',
@@ -146,29 +165,30 @@ function PageHero() {
         }}>
           <span>Home</span>
           <span style={{ color: '#14B8A6' }}>›</span>
-          <span style={{ color: '#14B8A6', fontWeight: 600 }}>Contact</span>
+          <span style={{ color: '#14B8A6', fontWeight: 600 }}>Services</span>
         </div>
 
         <h1 style={{
           fontFamily: 'var(--font-display)',
-          fontSize: 'clamp(28px,5vw,56px)',
+          fontSize: 'clamp(30px,5vw,60px)',
           fontWeight: 800, color: 'white',
-          lineHeight: 1.15, marginBottom: '16px',
+          lineHeight: 1.15, marginBottom: '18px',
           textShadow: '0 2px 20px rgba(0,0,0,0.3)'
         }}>
-          Let's Talk About<br />
+          Engineering Services<br />
           <span style={{
             background: 'linear-gradient(90deg, #14B8A6, #2DD4C4)',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'
-          }}>Your Next Project</span>
+          }}>Built to Last</span>
         </h1>
 
         <p style={{
           color: 'rgba(255,255,255,0.65)',
-          fontSize: 'clamp(14px,1.6vw,17px)', lineHeight: 1.75,
-          maxWidth: '520px', margin: '0 auto'
+          fontSize: 'clamp(14px,1.6vw,18px)', lineHeight: 1.75,
+          maxWidth: '560px', margin: '0 auto'
         }}>
-          Tell us about your requirement and our team will reach out with a tailored solution.
+          Comprehensive EPC solutions in power, solar, irrigation and industrial engineering —
+          executed with precision from concept to commissioning.
         </p>
       </div>
     </section>
@@ -221,42 +241,84 @@ function SuccessCard({ onReset }) {
   )
 }
 
-// ── Contact info card ─────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+//  CONTACT INFO CARD — live data from settings_information table
+// ══════════════════════════════════════════════════════════════
 function ContactInfoCard() {
+  const [info, setInfo] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+    axios.get(`${API_URL}/api/admin/settings/information/public`)
+      .then(res => {
+        if (!cancelled && res.data.success && res.data.data) {
+          setInfo(res.data.data)
+        }
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [])
+
+  const iconAddress = (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+      stroke="#14B8A6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+      <circle cx="12" cy="10" r="3"/>
+    </svg>
+  )
+  const iconPhone = (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+      stroke="#14B8A6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.9 12.13 19.79 19.79 0 0 1 1.91 3.54 2 2 0 0 1 3.89 1.35h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9a16 16 0 0 0 6.91 6.91l1.01-1.01a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2.02z"/>
+    </svg>
+  )
+  const iconEmail = (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+      stroke="#14B8A6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+      <polyline points="22,6 12,13 2,6"/>
+    </svg>
+  )
+
+  // Fallback (static) values — used only until DB data arrives / if empty
+  const fallback = {
+    address: '12, 3rd Cross, 1st Main, RMV 2nd Stage, Nageshettyhalli, Bengaluru – 560094',
+    phone: '+91 80 XXXX XXXX',
+    email: 'info@smeeindia.com',
+    map_url: null
+  }
+
+  const data = info || fallback
+
   const items = [
     {
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="#14B8A6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-          <circle cx="12" cy="10" r="3"/>
-        </svg>
-      ),
+      key: 'address',
+      icon: iconAddress,
       label: 'Address',
-      value: '12, 3rd Cross, 1st Main, RMV 2nd Stage, Nageshettyhalli, Bengaluru – 560094'
+      value: data.address,
+      href: data.map_url || null,
+      external: true,
+      title: data.map_url ? 'View on map' : undefined
     },
     {
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="#14B8A6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.9 12.13 19.79 19.79 0 0 1 1.91 3.54 2 2 0 0 1 3.89 1.35h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9a16 16 0 0 0 6.91 6.91l1.01-1.01a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2.02z"/>
-        </svg>
-      ),
+      key: 'phone',
+      icon: iconPhone,
       label: 'Phone',
-      value: '+91 80 XXXX XXXX'
+      value: data.phone,
+      href: data.phone ? `tel:${String(data.phone).replace(/\s+/g, '')}` : null,
+      external: false,
+      title: 'Call us'
     },
     {
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="#14B8A6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-          <polyline points="22,6 12,13 2,6"/>
-        </svg>
-      ),
+      key: 'email',
+      icon: iconEmail,
       label: 'Email',
-      value: 'info@smeeindia.com'
+      value: data.email,
+      href: data.email ? `mailto:${data.email}` : null,
+      external: false,
+      title: 'Email us'
     },
-  ]
+  ].filter(item => item.value) // hide rows with no value
 
   return (
     <div style={{
@@ -285,25 +347,51 @@ function ContactInfoCard() {
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          {items.map(({ icon, label, value }) => (
-            <div key={label} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-              <div style={{
-                width: '44px', height: '44px', borderRadius: '12px', flexShrink: 0,
-                background: 'rgba(20,184,166,0.15)',
-                border: '1px solid rgba(20,184,166,0.25)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center'
-              }}>{icon}</div>
-              <div>
+          {items.map(({ key, icon, label, value, href, external, title }) => {
+            const row = (
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
                 <div style={{
-                  fontSize: '11px', fontWeight: 700, color: '#14B8A6',
-                  letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px'
-                }}>{label}</div>
-                <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 'clamp(13px,1.3vw,14px)', lineHeight: 1.6 }}>
-                  {value}
+                  width: '44px', height: '44px', borderRadius: '12px', flexShrink: 0,
+                  background: 'rgba(20,184,166,0.15)',
+                  border: '1px solid rgba(20,184,166,0.25)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}>{icon}</div>
+                <div>
+                  <div style={{
+                    fontSize: '11px', fontWeight: 700, color: '#14B8A6',
+                    letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px'
+                  }}>{label}</div>
+                  <div
+                    className="cnt-info-value"
+                    style={{
+                      color: 'rgba(255,255,255,0.8)', fontSize: 'clamp(13px,1.3vw,14px)',
+                      lineHeight: 1.6, transition: 'color 0.2s'
+                    }}
+                  >
+                    {value}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+
+            if (!href) {
+              return <div key={key}>{row}</div>
+            }
+
+            return (
+              <a
+                key={key}
+                href={href}
+                target={external ? '_blank' : '_self'}
+                rel={external ? 'noopener noreferrer' : undefined}
+                title={title}
+                className="cnt-info-link"
+                style={{ textDecoration: 'none', display: 'block', cursor: 'pointer' }}
+              >
+                {row}
+              </a>
+            )
+          })}
         </div>
 
         {/* Working hours */}
@@ -328,6 +416,12 @@ function ContactInfoCard() {
           ))}
         </div>
       </div>
+
+      <style>{`
+        .cnt-info-link:hover .cnt-info-value {
+          color: #14B8A6;
+        }
+      `}</style>
     </div>
   )
 }

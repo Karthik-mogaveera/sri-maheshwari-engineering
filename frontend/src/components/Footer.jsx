@@ -267,9 +267,12 @@ export default function Footer() {
               <div style={{ textAlign: 'left' }}>
                 <div style={{
                   fontFamily: 'var(--font-display)', fontWeight: 700,
-                  fontSize: '17px', lineHeight: 1.2, color: 'white'
+                  fontSize: '17px', lineHeight: 1.2, color: '#14B8A6'
                 }}>Sri Maheshwari</div>
-                <div style={{ fontSize: '17px', color: '#14B8A6', letterSpacing: '0.1em' }}>
+                <div style={{ 
+                  fontFamily: 'var(--font-display)', fontWeight: 700,
+                  fontSize: '17px', lineHeight: 1.2, color: '#14B8A6'
+                 }}>
                   Engineering Enterprises
                 </div>
               </div>

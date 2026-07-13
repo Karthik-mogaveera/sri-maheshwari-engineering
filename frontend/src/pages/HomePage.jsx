@@ -42,6 +42,9 @@ const STATS = [
 // ══════════════════════════════════════════════════════════════
 //  HERO SLIDER
 // ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+//  HERO SLIDER
+// ══════════════════════════════════════════════════════════════
 function HeroSlider() {
   const [slides, setSlides] = useState(FALLBACK_SLIDES)
   const [current, setCurrent] = useState(0)
@@ -68,52 +71,57 @@ function HeroSlider() {
 
   const goTo = (i) => { clearInterval(timerRef.current); setCurrent(i); startTimer(slides.length) }
   const active = slides[current] || slides[0]
-  
-  const goToService = () => {
-  navigate('/services')
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  })
-}
 
-const goToAbout = () => {
-  navigate('about')
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  })
-}
+  const goToService = () => {
+    navigate('/services')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const goToAbout = () => {
+    navigate('about')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   return (
     <section id="home" style={{
-      position: 'relative',
-      height: '100vh', minHeight: '560px',
-      overflow: 'hidden'
+      paddingTop: 'clamp(100px,14vw,140px)',
+      paddingBottom: 'clamp(40px,6vw,64px)',
+      paddingLeft: 'clamp(16px,3vw,24px)',
+      paddingRight: 'clamp(16px,3vw,24px)',
+      textAlign: 'center', position: 'relative', overflow: 'hidden'
     }}>
-      {/* Slide backgrounds */}
+      {/* Slide backgrounds — same static-image layer pattern as PageHero, cycling per slide */}
       {slides.map((slide, i) => (
         <div
           key={slide.id || i}
           className={`hero-slide ${i === current ? 'active' : ''}`}
           style={{
+            position: 'absolute', inset: 0,
             backgroundImage: `url(${slide.image_url})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
-        >
-          <div className="hero-overlay" style={{ position: 'absolute', inset: 0 }} />
-        </div>
+        />
+      ))}
+
+      {/* Dark gradient overlay — identical to PageHero */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(135deg, rgba(6, 15, 29, 0.4) 0%, rgba(11, 31, 58, 0.62) 60%, rgba(13, 42, 74, 0.47) 100%)',
+      }} />
+
+      {/* Background rings — identical to PageHero */}
+      {[300, 500, 700].map(size => (
+        <div key={size} style={{
+          position: 'absolute', width: size, height: size,
+          border: '1px solid rgba(20,184,166,0.06)', borderRadius: '50%',
+          top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+          pointerEvents: 'none'
+        }} />
       ))}
 
       {/* Content */}
-      <div style={{
-        position: 'relative', zIndex: 2, height: '100%',
-        display: 'flex', flexDirection: 'column',
-        justifyContent: 'center', alignItems: 'center',
-        textAlign: 'center',
-        padding: 'clamp(80px,12vw,120px) clamp(16px,4vw,40px) clamp(60px,8vw,80px)'
-      }}>
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: '800px', margin: '0 auto' }}>
 
         {/* Badge */}
         <div style={{
@@ -138,11 +146,10 @@ const goToAbout = () => {
         {/* Main heading */}
         <h1 style={{
           fontFamily: 'var(--font-display)',
-          fontSize: 'clamp(26px, 5.5vw, 68px)',
+          fontSize: 'clamp(30px,5vw,60px)',
           fontWeight: 800, color: 'white', lineHeight: 1.15,
-          marginBottom: 'clamp(14px,2vw,20px)',
-          maxWidth: '900px',
-          textShadow: '0 2px 20px rgba(0,0,0,0.4)',
+          marginBottom: '18px',
+          textShadow: '0 2px 20px rgba(0,0,0,0.3)',
           animation: 'fadeInUp 0.9s 0.2s ease both'
         }}>
           Powering Progress Through<br />
@@ -202,7 +209,7 @@ const goToAbout = () => {
         </div>
 
         {/* Dot indicators */}
-        <div style={{ display: 'flex', gap: '8px', marginTop: 'clamp(30px,4vw,50px)' }}>
+        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginTop: 'clamp(30px,4vw,50px)' }}>
           {slides.map((_, i) => (
             <div
               key={i}
@@ -210,27 +217,6 @@ const goToAbout = () => {
               onClick={() => goTo(i)}
             />
           ))}
-        </div>
-      </div>
-
-      {/* Scroll indicator — hidden on small phones */}
-      <div className="hero-scroll-hint" style={{
-        position: 'absolute', bottom: '24px', left: '50%',
-        transform: 'translateX(-50%)', zIndex: 3,
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px'
-      }}>
-        <span style={{
-          color: 'rgba(255,255,255,0.5)', fontSize: '10px',
-          letterSpacing: '0.1em', textTransform: 'uppercase'
-        }}>Scroll</span>
-        <div style={{
-          width: '22px', height: '34px', border: '2px solid rgba(255,255,255,0.3)',
-          borderRadius: '11px', display: 'flex', justifyContent: 'center', paddingTop: '5px'
-        }}>
-          <div style={{
-            width: '4px', height: '7px', background: '#14B8A6',
-            borderRadius: '2px', animation: 'fadeInUp 1.5s ease infinite'
-          }} />
         </div>
       </div>
 

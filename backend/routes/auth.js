@@ -1,19 +1,48 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const rateLimit = require('express-rate-limit');
 const pool = require('../config/db');
 const { verifyToken } = require('../middleware/auth');
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'smee_super_secret_change_in_production';
+
+const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES = process.env.JWT_EXPIRES || '8h';   // token valid for 8 hours
+
+if (!JWT_SECRET) {
+  // Fail fast — never fall back to a hardcoded/predictable secret.
+  throw new Error(
+    'JWT_SECRET is not set. Define it in your .env file before starting the server.'
+  );
+}
+
+/* ──────────────────────────────────────────────
+   Rate limiter for login attempts
+   Max 5 attempts per IP per 15 minutes.
+   Successful logins don't count against the limit.
+────────────────────────────────────────────── */
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,   // 15 minutes
+  max: 5,                     // limit each IP to 5 login requests per window
+  standardHeaders: true,      // return rate limit info in RateLimit-* headers
+  legacyHeaders: false,
+  skipSuccessfulRequests: true, // only count failed login attempts
+  message: {
+    success: false,
+    message: 'Too many login attempts. Please try again after 15 minutes.'
+  },
+  handler: (req, res, next, options) => {
+    res.status(429).json(options.message);
+  }
+});
 
 /* ──────────────────────────────────────────────
    POST /api/admin/auth/login
    Body: { email, password }
    Returns: { success, token, admin: { id, name, email, role } }
 ────────────────────────────────────────────── */
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 

@@ -1,6 +1,13 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'smee_super_secret_change_in_production';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  // Fail fast — never fall back to a hardcoded/predictable secret.
+  throw new Error(
+    'JWT_SECRET is not set. Define it in your .env file before starting the server.'
+  );
+}
 
 /**
  * verifyToken — Express middleware

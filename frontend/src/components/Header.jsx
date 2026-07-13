@@ -143,14 +143,14 @@ export default function Header() {
               <div style={{
                 fontFamily: 'var(--font-display)', fontWeight: 700,
                 fontSize: 'clamp(12px, 2vw, 18px)',
-                color: 'rgba(20,184,166,0.9)', lineHeight: 1.2, letterSpacing: '0.01em'
+                color: '#14B8A6', lineHeight: 1.2, letterSpacing: '0.01em'
               }}>
                 Sri Maheshwari
               </div>
               <div style={{
                 fontFamily: 'var(--font-display)', fontWeight: 700,
                 fontSize: 'clamp(12px, 2vw, 18px)',
-                color: 'rgba(20,184,166,0.9)', lineHeight: 1.2, letterSpacing: '0.01em'
+                color: '#14B8A6', lineHeight: 1.2, letterSpacing: '0.01em'
               }}>Engineering Enterprises</div>
             </div>
           </button>

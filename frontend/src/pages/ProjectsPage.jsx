@@ -286,6 +286,9 @@ function WorksModal({ project, onClose }) {
 }
 
 // ── PAGE HERO BANNER ─────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+//  PAGE HERO BANNER
+// ══════════════════════════════════════════════════════════════
 function PageHero() {
   return (
     <section style={{
@@ -293,9 +296,23 @@ function PageHero() {
       paddingBottom: 'clamp(40px,6vw,64px)',
       paddingLeft: 'clamp(16px,3vw,24px)',
       paddingRight: 'clamp(16px,3vw,24px)',
-      background: 'linear-gradient(135deg, #060F1D 0%, #0B1F3A 60%, #0d2a4a 100%)',
       textAlign: 'center', position: 'relative', overflow: 'hidden'
     }}>
+      {/* Static hero image */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        backgroundImage: `url('/images/city.jpg')`, // ← swap in your image path/URL
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }} />
+
+      {/* Dark gradient overlay — same colors as before, now translucent over the image */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(135deg, rgba(6,15,29,0.92) 0%, rgba(11,31,58,0.88) 60%, rgba(13,42,74,0.75) 100%)',
+      }} />
+
+      {/* Background rings */}
       {[300, 500, 700].map(size => (
         <div key={size} style={{
           position: 'absolute', width: size, height: size,
@@ -306,6 +323,7 @@ function PageHero() {
       ))}
 
       <div style={{ position: 'relative', zIndex: 1, maxWidth: '800px', margin: '0 auto' }}>
+        {/* Breadcrumb */}
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: '8px',
           color: 'rgba(255,255,255,0.45)', fontSize: '13px',
@@ -313,7 +331,7 @@ function PageHero() {
         }}>
           <span>Home</span>
           <span style={{ color: '#14B8A6' }}>›</span>
-          <span style={{ color: '#14B8A6', fontWeight: 600 }}>Projects</span>
+          <span style={{ color: '#14B8A6', fontWeight: 600 }}>Services</span>
         </div>
 
         <h1 style={{
@@ -323,11 +341,11 @@ function PageHero() {
           lineHeight: 1.15, marginBottom: '18px',
           textShadow: '0 2px 20px rgba(0,0,0,0.3)'
         }}>
-          Projects That<br />
+          Engineering Services<br />
           <span style={{
             background: 'linear-gradient(90deg, #14B8A6, #2DD4C4)',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'
-          }}>Power the Nation</span>
+          }}>Built to Last</span>
         </h1>
 
         <p style={{
@@ -335,14 +353,13 @@ function PageHero() {
           fontSize: 'clamp(14px,1.6vw,18px)', lineHeight: 1.75,
           maxWidth: '560px', margin: '0 auto'
         }}>
-          A showcase of our completed and ongoing EPC projects across
-          substations, transmission lines, solar plants and irrigation systems.
+          Comprehensive EPC solutions in power, solar, irrigation and industrial engineering —
+          executed with precision from concept to commissioning.
         </p>
       </div>
     </section>
   )
 }
-
 // ══════════════════════════════════════════════════════════════
 //  PAGE ROOT
 // ══════════════════════════════════════════════════════════════
